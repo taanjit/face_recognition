@@ -4,37 +4,23 @@ from PIL import Image, ImageDraw
 from face_recognition import api
 import face_recognition
 import numpy as np
+import glob
 
-# The program we will be finding faces on the example below
-pil_im = Image.open('two_people.jpg')
-print(pil_im)
-# display(pil_im)
+file_path='./user_face_info/'
+known_face_encodings=[]
+known_face_names=[]
 
-# This is an example of running face recognition on a single image
-# and drawing a box around each person that was identified.
+for img in glob.glob(file_path+"*.png"):
+    file_name=(img.split('/')[2]).split('.')[0]
+    print(file_name)
 
-# Load a sample picture and learn how to recognize it.
-obama_image = face_recognition.api.load_image_file("obama.jpg")
-obama_face_encoding = face_recognition.api.face_encodings(obama_image)[0]
+    # Load a sample picture and learn how to recognize it.
+    image_file = face_recognition.api.load_image_file(img)
 
-# Load a second sample picture and learn how to recognize it.
-biden_image = face_recognition.api.load_image_file("biden.jpg")
-biden_face_encoding = face_recognition.api.face_encodings(biden_image)[0]
-
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    obama_face_encoding,
-    biden_face_encoding
-]
-
-
-known_face_names = [
-    "Barack Obama",
-    "Joe Biden"
-]
+    known_face_encodings.append(face_recognition.api.face_encodings(image_file)[0])
+    known_face_names.append((img.split('/')[2]).split('.')[0])
 
 save('known_face_encodings.npy', known_face_encodings)
 save('known_face_names.npy', known_face_names)
-
 
 print('Learned encoding for', len(known_face_encodings), 'images.')
